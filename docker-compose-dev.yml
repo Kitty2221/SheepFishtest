@@ -1,0 +1,48 @@
+version: '3.7'
+
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker/containers/postgres.Dockerfile
+    container_name: django_db
+    restart: always
+    env_file:
+      - ./docker/envs/.env-local
+    ports:
+      - "5432:5432"
+    volumes:
+      - .data/postgres:/var/lib/postgresql/data/
+#  web:
+#    build:
+#      context: .
+#      dockerfile: docker/containers/api.Dockerfile
+#    container_name: django_api
+#    volumes:
+#      - .:/SheepFishtest
+#    command: SheepFishtest/docker/scripts/api.entrypoint.dev.sh
+#    env_file:
+#      - ./docker/envs/.env-local
+#    ports:
+#      - "8000:8000"  #
+#      - "8080:8080"  # port for pycharm server
+#    depends_on:
+#      - postgres
+#      - redis-django
+  redis-django:
+    restart: always
+    image: redis:5.0.7
+    volumes:
+      - ./.data/redis:/data:rw
+    ports:
+      - 6379:6379
+
+  wkhtmltopdf:
+    container_name: wkhtmltopdf-aas
+    image: "openlabs/docker-wkhtmltopdf-aas"
+    ports:
+      - "4133:80"
+    restart: unless-stopped
+    depends_on:
+      - postgres
