@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ua">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check</title>
+    {% load check_tags %}
+    {% load static %}
+    <link rel="stylesheet" href="{static'style.css'}">
+</head>
+
+<body>
+    <div class="check">
+        <svg width="210px" viewBox="0 0 210 5" xmlns="http://www.w3.org/2000/svg">
+         <path d="M0,0 210,0" fill="none" stroke="#e2e3de" stroke-dasharray="3 3" stroke-width="10"/>
+        </svg>
+
+        <div class="info">
+            <span>Мережа ресторанів доставки "жрачка топ"</span>
+        </div>
+        <h4>Check</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Number</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for key, value in order.items %}
+                <tr>
+                    <td data-label="Найменування">{{ key }}</td>
+                    <td data-label="Кількість">{{ value|get_count }}</td>
+                    <td data-label="Ціна">{{ value|get_price }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p class="res">All: {{ total_price }}</p>
+    </div>
+</body>
+
+</html>

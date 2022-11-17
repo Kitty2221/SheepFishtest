@@ -1,0 +1,146 @@
+swagger: '2.0'
+info:
+  title: Snippets API
+  description: API documentation of App
+  version: 1.0.0
+basePath: /api/v1
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  basic:
+    type: basic
+security:
+  - basic: []
+paths:
+  /check/:
+    post:
+      operationId: check_create
+      description: 'Створює чеки для конкретного принтера'
+      parameters:
+        - name: point_id
+          in: body
+        - name: order
+          in: body
+        - name: status
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Check'
+      responses:
+        '201':
+          description: 'Чек успішно створено'
+          schema:
+            $ref: '#/definitions/Check'
+        '400':
+          description: 'Замовлення з таким номером вже існує'
+          schema:
+            $ref: '#/definitions/Check'
+        '404':
+            description: 'Принтер не знайдено'
+            schema:
+              $ref: '#/definitions/Check'
+      tags:
+        - check
+    parameters: ['point_id', 'order']
+  /check/{id}/:
+    put:
+      operationId: check_update
+      description: ''
+      parameters:
+        - name: id
+          in: path
+        - name: status
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Check'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Check'
+      tags:
+        - check
+  /download-pdf/{id}/download/:
+    get:
+      operationId: download-pdf_download
+      description: ''
+      parameters:
+        - name: check_id
+          in: path
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Check'
+      produces:
+        - application/pdf
+      tags:
+        - download-pdf
+  /printer/{api_key}/:
+    get:
+      operationId: printer_list
+      description: 'Список доступних чеків для друку'
+      parameters:
+        - name: api_key
+          in: path
+      responses:
+        '200':
+          description: 'send Json list'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Printer'
+          '404':
+            description: 'Для цього принтера чеків доступних для друку не знайдено'
+            schema:
+              $ref: '#/definitions/Printer'
+      tags:
+        - printer
+definitions:
+  Check:
+    description: Check(id, printer, type, order, status, pdf_file)
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      status:
+        title: Status check
+        type: string
+        enum:
+          - new
+          - rendered
+          - printed
+        x-nullable: true
+  Printer:
+    description: Printer(id, name, api_key, check_type, point_id)
+    required:
+      - point_id
+    type: object
+    properties:
+      name:
+        title: Name Printer
+        type: string
+        maxLength: 512
+        x-nullable: true
+      api_key:
+        title: Key access API
+        type: string
+        maxLength: 512
+        x-nullable: true
+      check_type:
+        title: Type check
+        type: string
+        enum:
+          - kitchen
+          - client
+        x-nullable: true
+      point_id:
+        title: Point bind printer
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
